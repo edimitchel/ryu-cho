@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
-    "module": "commonjs",
+    "module": "ES2015",
     "moduleResolution": "node",
     "strict": true,
     "noUnusedLocals": true,
     "esModuleInterop": true,
     "lib": ["ESNext"],
-    "types": ["node", "jest"],
+    "types": ["node", "vitest"],
     "paths": {
       "src/*": ["src/*"]
     }
