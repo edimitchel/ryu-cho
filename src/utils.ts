@@ -1,6 +1,7 @@
 import path from 'path'
 import colors from 'colors/safe'
 import { Git } from './git'
+import { ShellString } from 'shelljs'
 
 export type LogType = 'I' | 'S' | 'W' | 'E'
 
@@ -49,8 +50,15 @@ export function removeHash(text: string): string {
   return text.replace(/( )?\(#.*\)/, '')
 }
 
-export function computeFileDiffSimilariry(shaFrom: string) {
+const fileNameRE = /b\/([a-z/-]*\.md)[\s\S].*dissimilarity index (\d{1,2})%/g;
+
+export function computeFileDiffSimilariry(refFrom: string) {
   const git = new Git();
-  const diffOutput = git.diff(shaFrom + ' -B1%/1% @~ -- \':*.md\' | grep \'diss\|diff --git');
-  return diffOutput;
+  const diff = git.diff(refFrom + ' -B1%/1% @~ -- \':*.md\' | grep \'diss\|diff --git') as ShellString;
+  const matches = Array.from(diff.stdout.matchAll(fileNameRE));
+  
+  return matches.map(([_, name, percentage]) => ({
+    name,
+    difference: parseInt(percentage) / 100,
+  }))
 }
