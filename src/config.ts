@@ -84,6 +84,22 @@ export interface UserConfig {
    * @example 'docs/'
    */
   pathStartsWith?: string
+
+  /**
+   * Enable progress translation tracker which would be visible on the issue
+   * assigned for.
+   * Will generate tree only if any update are detected.
+   */
+  progressTracker?: {
+    /**
+     * Issue number to track the translation status to find
+     * the tracker issue to update on each translation update.
+     * @exemple 120
+     */
+    issueNumber?: number
+
+    updateTitle: boolean
+  }
 }
 
 export interface Config {
@@ -93,6 +109,10 @@ export interface Config {
   workflowName: string
   trackFrom: string
   pathStartsWith?: string
+  progressTracker?: {
+    issueNumber: number
+    updateTitle: boolean
+  }
 
   remote: {
     upstream: Remote
@@ -115,6 +135,10 @@ export function createConfig(config: UserConfig): Config {
     workflowName: config.workflowName ?? 'ryu-cho',
     trackFrom: config.trackFrom,
     pathStartsWith: config.pathStartsWith,
+    progressTracker: {
+      issueNumber: config.progressTracker?.issueNumber!,
+      updateTitle: config.progressTracker?.updateTitle ?? false
+    },
 
     remote: {
       upstream: {

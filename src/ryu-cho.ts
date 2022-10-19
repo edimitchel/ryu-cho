@@ -97,6 +97,22 @@ export class RyuCho {
     await this.createPullRequest(hash, shortHash, feed, issueNo)
   }
 
+  protected async generateTranslationProgress() {
+    if (this.config.progressTracker) {
+      /*
+       * 1. Generate translation tree skeleton
+       * 2. Update translation status of each file
+       *   - not translated (not visible in diff)
+       *   - probably outdated translation (last translated edition before last source version)
+       *     (establish severity according to the amount of changes made)
+       *   - not enough translated (higher similarity than the amount fixed)
+       *   - translated (is last update, lower similarity than the amount fixed)
+       * 3. Establish percentage of translation
+       * 4. Generate Markdown file with HTML comment for meta information)
+       */
+    }
+  }
+
   protected async containsValidFile(feed: Feed, hash: string) {
     if (!this.config.pathStartsWith) {
       return true
