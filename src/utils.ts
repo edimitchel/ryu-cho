@@ -1,5 +1,6 @@
 import path from 'path'
 import colors from 'colors/safe'
+import { Git } from './git'
 
 export type LogType = 'I' | 'S' | 'W' | 'E'
 
@@ -46,4 +47,10 @@ export function extractRepoOwner(url: string): string {
 
 export function removeHash(text: string): string {
   return text.replace(/( )?\(#.*\)/, '')
+}
+
+export function computeFileDiffSimilariry(shaFrom: string) {
+  const git = new Git();
+  const diffOutput = git.diff(shaFrom + ' -B1%/1% @~ -- \':*.md\' | grep \'diss\|diff --git');
+  return diffOutput;
 }

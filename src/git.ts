@@ -48,4 +48,8 @@ export class Git {
   reset() {
     return this.exec('reset --hard')
   }
+
+  diff(args = '') {
+    return this.exec(`diff ${args}`);
+  }
 }
