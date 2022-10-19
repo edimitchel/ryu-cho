@@ -50,15 +50,28 @@ export function removeHash(text: string): string {
   return text.replace(/( )?\(#.*\)/, '')
 }
 
-const fileNameRE = /b\/([a-z/-]*\.md)[\s\S].*dissimilarity index (\d{1,2})%/g;
+function queryDiffFilesWithDissimilarity(fromRef: string): string {
+  const git = new Git()
+  const diff = git.diff(
+    fromRef + " -B1%/1% @~ -- ':*.md' | grep 'diss|diff --git"
+  ) as ShellString
 
-export function computeFileDiffSimilariry(refFrom: string) {
-  const git = new Git();
-  const diff = git.diff(refFrom + ' -B1%/1% @~ -- \':*.md\' | grep \'diss\|diff --git') as ShellString;
-  const matches = Array.from(diff.stdout.matchAll(fileNameRE));
-  
+  return diff.stdout
+}
+
+const fileNameRE = /b\/([a-z/-]*\.md)[\s\S].*dissimilarity index (\d{1,2})%/g
+
+export function computeFileDifferenceContent(diffOutput: string) {
+  const matches = Array.from(diffOutput.matchAll(fileNameRE))
+
   return matches.map(([_, name, percentage]) => ({
     name,
-    difference: parseInt(percentage) / 100,
+    difference: parseInt(percentage) / 100
   }))
+}
+
+export function getFileDifferences(fromRef: string) {
+  const diff = queryDiffFilesWithDissimilarity(fromRef)
+
+  return computeFileDifferenceContent(diff)
 }
