@@ -98,6 +98,18 @@ export interface UserConfig {
      */
     issueNumber?: number
 
+    /**
+     * Amount of percentage text difference between source and translated content which will
+     * consider the translation as possibly not fully translated.
+     *
+     * @default 0.20
+     * @example 0.20
+     */
+    translatedSimilarityThrottle?: number
+
+    /**
+     * Enable or disable updating the title of the tracking issue (with the percentage of translation)
+     */
     updateTitle: boolean
   }
 }
@@ -112,6 +124,7 @@ export interface Config {
   progressTracker?: {
     issueNumber: number
     updateTitle: boolean
+    translatedSimilarityThrottle: number
   }
 
   remote: {
@@ -128,6 +141,7 @@ export interface Remote {
 }
 
 export function createConfig(config: UserConfig): Config {
+  const { progressTracker } = config
   return {
     userName: config.userName,
     email: config.email,
@@ -135,10 +149,14 @@ export function createConfig(config: UserConfig): Config {
     workflowName: config.workflowName ?? 'ryu-cho',
     trackFrom: config.trackFrom,
     pathStartsWith: config.pathStartsWith,
-    progressTracker: {
-      issueNumber: config.progressTracker?.issueNumber!,
-      updateTitle: config.progressTracker?.updateTitle ?? false
-    },
+    progressTracker: progressTracker
+      ? {
+          issueNumber: progressTracker?.issueNumber!,
+          updateTitle: progressTracker?.updateTitle ?? false,
+          translatedSimilarityThrottle:
+            progressTracker.translatedSimilarityThrottle ?? 0.2
+        }
+      : undefined,
 
     remote: {
       upstream: {
